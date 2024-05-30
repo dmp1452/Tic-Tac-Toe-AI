@@ -3,6 +3,7 @@ import pygame
 import numpy as np
 import random
 import copy
+import time
 from values import *
 
 pygame.init()
@@ -67,12 +68,13 @@ class AI:
         index = random.randrange(0,len(empty_squares))
         return empty_squares[index]
 
-    def minimax(self,board,maximizing):
+    def minimax(self,board,maximizing,alpha,beta):
         case = board.final_state()
         if case !=0:
            return case, None
         elif board.is_full():
             return 0, None
+        
         empty_squares = board.get_empty()
         if maximizing:
             max_eval =-2
@@ -80,10 +82,13 @@ class AI:
             for (row,col) in empty_squares:
                 temp_board = copy.deepcopy(board)
                 temp_board.place(row,col,1)
-                eval =self.minimax(temp_board,False)[0]
+                eval =self.minimax(temp_board,False,alpha,beta)[0]
                 if eval > max_eval:
                     max_eval=eval
                     best_move = (row,col)
+                alpha = max(alpha,max_eval)
+                if beta<= alpha:
+                    break
             return max_eval, best_move
         elif not maximizing:
             min_eval =2
@@ -91,10 +96,14 @@ class AI:
             for (row,col) in empty_squares:
                 temp_board = copy.deepcopy(board)
                 temp_board.place(row,col,self.player)
-                eval =self.minimax(temp_board,True)[0]
+                eval =self.minimax(temp_board,True,alpha,beta)[0]
                 if eval < min_eval:
                     min_eval=eval
                     best_move = (row,col)
+                beta = min(beta,min_eval)
+                if beta<= alpha:
+                    break
+                
             return min_eval, best_move
 
 
@@ -104,7 +113,11 @@ class AI:
             eval = 'random, all choices equal'
             move=self.random_choice(main_board)
         else:"""
-        eval , move =self.minimax(main_board,False)
+        start_time = time.time()
+        eval , move =self.minimax(main_board,False,-10,10)
+        end_time = time.time()
+        elapsed = end_time-start_time
+        print(str(elapsed))
         message("AI has chosen "+ str(move)+" with eval "+ str(eval))
         return move
 
