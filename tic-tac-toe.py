@@ -99,11 +99,12 @@ class AI:
 
 
     def eval(self,main_board):
+        """
         if main_board.is_empty():
             eval = 'random, all choices equal'
             move=self.random_choice(main_board)
-        else:
-            eval , move =self.minimax(main_board,False)
+        else:"""
+        eval , move =self.minimax(main_board,False)
         message("AI has chosen "+ str(move)+" with eval "+ str(eval))
         return move
 
